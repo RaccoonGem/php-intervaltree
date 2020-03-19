@@ -136,16 +136,21 @@ class IntervalTree
      */
     protected function find_intervals($interval)
     {
+        //Added by Eric
+        $endPoint = null;
+
         if ($interval instanceof RangeInterface) {
             $first = $interval->getStart();
             $last = $interval->getEnd();
         } else {
-            $first = $interval;
+            $first = $interval['startdatetime'];
             $last = null;
+            //Added by Eric to keep the endDateTime available
+            $endPoint = $interval['enddatetime'];
         }
 
         if (null === $last) {
-            $result = $this->point_search($this->top_node, $first);
+            $result = $this->point_search($this->top_node, $first, $endPoint);
         } else {
             $result = array();
             foreach ($interval->iterable() as $j) {
@@ -162,13 +167,27 @@ class IntervalTree
      *
      * @return array
      */
-    protected function point_search(TreeNode $node, $point)
+    protected function point_search(TreeNode $node, $point, $endPoint = null)
     {
         $result = array();
 
         // check whether the node values overlap point.
         foreach ($node->s_center as $k) {
-            if ($this->compare($k->getStart(), $point) <= 0 && $this->compare($k->getEnd(), $point) > 0) {
+            $kStartVsPoint = $this->compare($k->getStart(), $point);
+            $kEndVsPoint = $this->compare($k->getEnd(), $point);
+
+            //Added by Eric
+            $kEndVsEndPoint = $this->compare($k->getEnd(),!empty($endPoint) ? $endPoint : 0);
+
+            if ($kStartVsPoint <= 0 && $kEndVsPoint > 0) {
+                if ($k instanceof DateRangeExclusive) {
+                    if($kStartVsPoint == 0 && $kEndVsEndPoint == 0 ) {
+                        $k->overlapType = "Full";
+                    }
+                    else {
+                        $k->overlapType = "Partial";
+                    }
+                }
                 $result[spl_object_hash($k)] = $k;
             }
         }
@@ -180,14 +199,14 @@ class IntervalTree
         if ($node->left_node && $comparedValue < 0) {
             $result = array_merge(
                 $result,
-                $this->point_search($node->left_node, $point, $result)
+                $this->point_search($node->left_node, $point, $endPoint, $result)
             );
         }
 
         if ($node->right_node && $comparedValue > 0) {
             $result = array_merge(
                 $result,
-                $this->point_search($node->right_node, $point, $result)
+                $this->point_search($node->right_node, $point, $endPoint, $result)
             );
         }
 

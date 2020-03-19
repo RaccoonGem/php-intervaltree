@@ -24,6 +24,13 @@ class DateRangeExclusive implements RangeInterface
     protected $step;
 
     /**
+     * @var mixed   Boolean False if it does not overlap
+     *              String "Complete" if it completely overlaps
+     *              String "Partial" if it partially overlaps
+     */
+    protected $overlapType;
+
+    /**
      * @param \DateTime     $start
      * @param \DateTime     $end
      * @param \DateInterval $step
@@ -33,6 +40,7 @@ class DateRangeExclusive implements RangeInterface
         $this->start = clone $start;
         $this->end = clone $end;
         $this->step = $step ?: new DateInterval('P1D');
+        $this->overlapType = false;
     }
 
     /**
@@ -63,9 +71,15 @@ class DateRangeExclusive implements RangeInterface
     public function iterable()
     {
         $date = clone $this->getStart();
+        $dateForComparison = clone $this->getStart();
 
         while ($date < $this->getEnd()) {
-            yield $date;
+            if($dateForComparison->add($this->step) == $this->getEnd()) {
+                yield ['startdatetime'=>$date, 'enddatetime'=>$this->getEnd()];
+            }
+            else {
+                yield ['startdatetime' => $date, 'enddatetime' => null];
+            }
             $date->add($this->step);
         }
     }
