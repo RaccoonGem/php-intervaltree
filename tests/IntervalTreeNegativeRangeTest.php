@@ -2,8 +2,9 @@
 
 use IntervalTree\IntervalTree;
 use IntervalTree\DateRangeExclusive;
+use PHPUnit\Framework\TestCase;
 
-class IntervalTreeNegativeRangeTest extends PHPUnit_Framework_TestCase
+class IntervalTreeNegativeRangeTest extends TestCase
 {
     /**
      * @expectedException \IntervalTree\NegativeRangeException

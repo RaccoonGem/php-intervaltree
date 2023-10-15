@@ -1,4 +1,4 @@
 
 test:
-	phpunit --colors tests
+	./vendor/bin/phpunit ./tests/
 

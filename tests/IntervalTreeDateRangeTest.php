@@ -5,8 +5,9 @@ use IntervalTree\DateRangeInclusive;
 use IntervalTree\NumericRangeInclusive;
 use IntervalTree\DateRangeExclusive;
 use IntervalTree\NumericRangeExclusive;
+use PHPUnit\Framework\TestCase;
 
-class IntervalTreeDateRangeTest extends PHPUnit_Framework_TestCase {
+class IntervalTreeDateRangeTest extends TestCase {
 
 	public function testDateRangeInclusiveIteration() {
 		$expected = array(
