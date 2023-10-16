@@ -16,6 +16,7 @@ class IntervalTreeNegativeRangeTest extends TestCase
             date_create('2014-01-01T03:15:00+00:00')  // Range end
         );
 
+        $this->expectException(InvalidArgumentException::class);
         $tree = new IntervalTree(array($dateRange));
     }
 }

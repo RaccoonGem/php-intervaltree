@@ -35,6 +35,9 @@ class IntervalTreeNumericTest extends TestCase {
 		$this->assertSame($intervals[6], $results[0]);
 		$this->assertSame($intervals[0], $results[1]);
 		$this->assertSame($intervals[1], $results[2]);
+		$results = $tree->search(-6);
+		$this->assertCount(1, $results);
+		$this->assertSame($intervals[7], $results[0]);
 	}
 
 	public function testNumericInclusiveRangeSearch() {
@@ -45,6 +48,20 @@ class IntervalTreeNumericTest extends TestCase {
 		$this->assertSame($intervals[0], $results[0]);
 		$this->assertSame($intervals[1], $results[1]);
 		$this->assertSame($intervals[2], $results[2]);
+		$results = $tree->search(new NumericRangeInclusive(-7, -2));
+		$this->assertCount(2, $results);
+		$this->assertSame($intervals[7], $results[0]);
+		$this->assertSame($intervals[6], $results[1]);
+		$results = $tree->search(new NumericRangeInclusive(-8, 16));
+		$this->assertCount(8, $results);
+		$this->assertSame($intervals[7], $results[0]);
+		$this->assertSame($intervals[6], $results[1]);
+		$this->assertSame($intervals[0], $results[2]);
+		$this->assertSame($intervals[1], $results[3]);
+		$this->assertSame($intervals[2], $results[4]);
+		$this->assertSame($intervals[3], $results[5]);
+		$this->assertSame($intervals[5], $results[6]);
+		$this->assertSame($intervals[4], $results[7]);
 	}
 
 	public function testNumericExclusiveSearch() {
@@ -66,6 +83,8 @@ class IntervalTreeNumericTest extends TestCase {
 		$this->assertSame($intervals[0], $results[0]);
 		$results = $tree->search(12);
 		$this->assertCount(0, $results);
+		$results = $tree->search(-1);
+		$this->assertCount(0, $results);
 	}
 
 	private function getNumericInclusiveIntervals() {
@@ -85,6 +104,7 @@ class IntervalTreeNumericTest extends TestCase {
 			new $class(13, 16),
 			new $class(11, 12),
 			new $class(-3, 4),
+			new $class(-8, -5),
 		);
 	}
 
