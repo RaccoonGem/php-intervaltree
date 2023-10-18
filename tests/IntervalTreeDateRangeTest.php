@@ -89,6 +89,17 @@ class IntervalTreeDateRangeTest extends TestCase {
 		$this->assertCount(2, $results);
 		$this->assertSame($intervals[0], $results[0]);
 		$this->assertSame($intervals[1], $results[1]);
+
+		$searchRange = new DateRangeExclusive(
+			date_create('2014-06-01T00:00:00+00:00'),
+			date_create('2014-07-20T00:00:00+00:00')
+		);
+		$results = $tree->search($searchRange);
+		$this->assertCount(4, $results);
+		$this->assertSame($intervals[7], $results[0]);
+		$this->assertSame($intervals[4], $results[1]);
+		$this->assertSame($intervals[5], $results[2]);
+		$this->assertSame($intervals[6], $results[3]);
 	}
 
 	public function testDateRangeExclusiveSearchEndOfRange() {
@@ -114,6 +125,7 @@ class IntervalTreeDateRangeTest extends TestCase {
 
 	private function intervals($class) {
 		$day_interval = new DateInterval('P1D');
+		$minute_interval = new DateInterval('PT1M');
 		return array(
 			new $class(
 				date_create('2014-09-01T00:00:00+00:00'),
@@ -134,6 +146,26 @@ class IntervalTreeDateRangeTest extends TestCase {
 				date_create('2014-08-20T00:00:00+00:00'),
 				date_create('2014-09-04T00:00:00+00:00'),
 				$day_interval
+			),
+			new $class(
+				date_create('2014-07-01T00:00:00+00:00'),
+				date_create('2014-07-05T00:00:00+00:00'),
+				$minute_interval
+			),
+			new $class(
+				date_create('2014-07-04T00:00:00+00:00'),
+				date_create('2014-07-07T00:00:00+00:00'),
+				$minute_interval
+			),
+			new $class(
+				date_create('2014-07-10T00:00:00+00:00'),
+				date_create('2014-07-15T00:00:00+00:00'),
+				$minute_interval
+			),
+			new $class(
+				date_create('2014-06-20T00:00:00+00:00'),
+				date_create('2014-07-04T00:00:00+00:00'),
+				$minute_interval
 			),
 		);
 	}
